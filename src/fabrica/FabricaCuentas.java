@@ -5,7 +5,7 @@ import intereses.*;
 import java.util.Scanner;
 
 /**
- * Clase creacion de cuenta
+ * Clase para la creacion de cuenta bancaria
  */
 public class FabricaCuentas {
 
