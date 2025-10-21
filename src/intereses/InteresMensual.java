@@ -12,7 +12,7 @@ public class InteresMensual implements StrategyInteres {
 
   @Override
   public double calInteres(double saldo) {
-    if (saldo >= 1000) {
+    if (saldo >= 1000 && saldo < 50000) {
       return saldo * 0.015;
     }
     return 0;

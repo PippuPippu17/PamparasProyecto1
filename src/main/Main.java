@@ -2,8 +2,11 @@ package main;
 
 import intereses.*;
 import cuentas.*;
+import fabrica.*;
+import serviciosextra.*;
 import java.util.List;
 import java.util.ArrayList;
+
 
 import java.util.Scanner;
 
@@ -34,7 +37,10 @@ public class Main {
 
       switch (opcionPrincipal) {
       case 1:
-        System.out.println("\nCreacion de cuenta");
+        Cuenta nuevaCuenta = FabricaCuentas.crearCuenta();
+        if (nuevaCuenta != null) {
+        cuentas.add(nuevaCuenta);
+        }
         break;
 
       case 2:
@@ -53,6 +59,7 @@ public class Main {
         } else {
           System.out.println("PIN invalido. Regresando al menu principal...\n");
         }
+        break;
       case 0:
         System.out.println("Hasta pronto!");
         salir = true;
@@ -111,7 +118,54 @@ public class Main {
             cuenta.depositar(deposito);
             break;
           case 3:
-            System.out.println("[Opcion: Contratar servicio adicional]");
+            if (cuenta.getEstado().getEstado().equals("Activa")) {
+              ServAdicional servicio = new serviciosextra.CuentaBase(cuenta);
+              boolean menuServicios = true;
+
+              while (menuServicios) {
+                System.out.println("\n---SERVICIOS ADICIONALES---");
+                System.out.println("1. Seguro Antifraude (+$1500)");
+                System.out.println("2. Programa de Recompensas (+$0)");
+                System.out.println("3. Alertas Premium (+$600)");
+                System.out.println("4. Ver servicios contradaos.");
+                System.out.println("0. Salir");
+
+                int serv = uwu.nextInt();
+                uwu.nextLine();
+                
+                switch (serv) {
+                  case 1:
+                    servicio = new serviciosextra.SeguroAntifraude(servicio, cuenta);
+                    double precio = cuenta.getSaldo() - 1500;
+                    cuenta.setSaldo(precio);
+                    System.out.println("Seguro Antifraude contratado.");
+                    break;
+                  case 2:
+                    servicio = new serviciosextra.Recompensas(servicio, cuenta);
+                    double precios = cuenta.getSaldo() - 0;
+                    cuenta.setSaldo(precios);
+                    System.out.println("Programa de Recompensas contratado.");
+                    break;
+                  case 3:
+                    servicio = new serviciosextra.AlertasPremium(servicio, cuenta);
+                     double precioss = cuenta.getSaldo() - 600;
+                    cuenta.setSaldo(precioss);
+                    System.out.println("Alertas Premium contratadas.");
+                    break;
+                  case 4:
+                    System.out.println("Descripciones: " + servicio.getDesc());
+                    System.out.println("Costo total mensual: $" + servicio.getCosto());
+                    break;
+                  case 0:
+                    menuServicios = false;
+                    break;
+                  default:
+                    System.out.println("Opción no válida.");
+                }
+              } 
+            } else {
+              System.out.println("No puedes contratar servicios si tu cuenta no está activa.");
+            }
             break;
           case 4:
             System.out.println(cuenta.desc());
@@ -126,8 +180,9 @@ public class Main {
         }
       
       } else {
-        System.out.println("La cuenta esta cerrada, no se puede acceder al menu.");
-
+        System.out.println("La cuenta no se encuentra activa (estado: " 
+        + cuenta.getEstado().getEstado() + "). Regresando al menu principal...\n");
+        salirCuenta = true;      
       }
     }
   }

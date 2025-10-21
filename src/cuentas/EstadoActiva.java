@@ -17,8 +17,16 @@ public class EstadoActiva implements EstadoCuenta {
   @Override
   public void depositar(Cuenta cuenta, double monto) {
     cuenta.setSaldo(cuenta.getSaldo() + monto);
+    
+    //Esta es la actividad sospechosa para pasar a estado congelada porque no se que poner
+    if (monto > 100000){
+      cuenta.setEstado(new EstadoCongelada());
+      System.out.println("Cuenta congelada por actividad sospechosa (deposito mayor a $100,000).");
+    } else {
     System.out.println("Se ha realizado el deposito. Saldo total: $" + cuenta.getSaldo());
+    }
   }
+
 
   @Override
   public void retirar(Cuenta cuenta, double monto) {
