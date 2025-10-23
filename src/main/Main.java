@@ -4,14 +4,19 @@ import intereses.*;
 import cuentas.*;
 import fabrica.*;
 import serviciosextra.*;
+import observer.*;
+import archivo.*;
+import excepciones.*;
+
 import java.util.List;
 import java.util.ArrayList;
-
-
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * Clase main con menu interactivo de PumaBank.
+ * Clase principal del sistema PumaBank.
+ * Contiene los menús y opciones interactivas para el usuario,
+ * con validaciones y manejo de excepciones personalizadas.
  */
 public class Main {
 
@@ -20,104 +25,158 @@ public class Main {
     int opcionPrincipal;
     boolean salir = false;
 
-    // Lista dinamica para almacenar las cuentas
     List<Cuenta> cuentas = new ArrayList<>();
-    
+    Portafolio portafolio = new Portafolio();
+
+    // Cuentas de prueba 
     cuentas.add(new Cuenta("LUIS", 3000.0, new InteresMensual(), new EstadoActiva(), "1212"));
-    cuentas.add(new Cuenta("JULIO", 200, new InteresMensual(), new cuentas.EstadoCerrada(), "7777"));
+    cuentas.add(new Cuenta("JULIO", 200.0, new InteresMensual(), new EstadoCerrada(), "7777"));
+
+    System.out.println("\n--- Bienvenido a PUMABANK ---");
+
     while (!salir) {
-      System.out.println("  ---Bienvenido a PUMABANK---");
-      System.out.print("Seleccione una opcion: ");
-      System.out.println("\n1. Crear cuenta");
-      System.out.println("2. Ingresar PIN");
-      System.out.println("0. Salir");
-
-      opcionPrincipal = uwu.nextInt();
-      uwu.nextLine(); // limpiar buffer
-
-      switch (opcionPrincipal) {
-      case 1:
-        Cuenta nuevaCuenta = FabricaCuentas.crearCuenta();
-        if (nuevaCuenta != null) {
-        cuentas.add(nuevaCuenta);
-        }
-        break;
-
-      case 2:
-        System.out.print("\nIngrese su PIN: ");
-        String pin = uwu.nextLine();
-
-        Cuenta cuentaActual = null;
-        for (Cuenta c : cuentas) {
-          if (c.getNIP().equals(pin)) {
-            cuentaActual = c;
-            break;
-          }
-        }
-        if (cuentaActual != null) {
-          mostrarMenuCuenta(uwu, cuentaActual);
-        } else {
-          System.out.println("PIN invalido. Regresando al menu principal...\n");
-        }
-        break;
-      case 0:
-        System.out.println("Hasta pronto!");
-        salir = true;
-        break;
-
-      default:
-        System.out.println("Opcion no valida. Intente nuevamente.\n");
-      }
-    }
-    uwu.close();
-  }
-
-
-
-  /**
-   * Menu secundario tras ingresar PIN correcto.
-   */
-  private static void mostrarMenuCuenta(Scanner uwu, Cuenta cuenta) {
-    int opcionCuenta;
-    boolean salirCuenta = false;
-
-    while (!salirCuenta) {
-      if (cuenta.getEstado().getEstado().equals("Cerrada")){
-        System.out.println("Deseas reactivar la cuenta? SI/NO");
-        String activacion = uwu.nextLine();
-        if (activacion.equalsIgnoreCase("SI")){
-          cuenta.setEstado(new EstadoActiva());
-        } 
-      }
-    
-
-      if (cuenta.getEstado().getEstado().equals("Activa")) {
-        System.out.println("\n---MENU DE CUENTA DE " + cuenta.getCliente() + "---");
-        System.out.println("1. Retirar");
-        System.out.println("2. Depositar");
-        System.out.println("3. Contratar servicio adicional");
-        System.out.println("4. Obtener informacion de cuenta");
+      try {
+        System.out.println("\nMENU PRINCIPAL");
+        System.out.println("1. Crear cuenta");
+        System.out.println("2. Ingresar NIP");
+        System.out.println("3. Ver Portafolio");
+        System.out.println("4. Exportar Portafolio");
         System.out.println("0. Salir");
         System.out.print("Seleccione una opcion: ");
 
-        opcionCuenta = uwu.nextInt();
-        uwu.nextLine(); // limpiar buffer
+        opcionPrincipal = Integer.parseInt(uwu.nextLine().trim());
 
-        switch (opcionCuenta) {
-          case 1:
+        switch (opcionPrincipal) {
+          case 1 : {
+            Cuenta nuevaCuenta = FabricaCuentas.crearCuenta();
+            if (nuevaCuenta != null) {
+              cuentas.add(nuevaCuenta);
+              portafolio.agregarCuenta(nuevaCuenta);
+              System.out.println("Cuenta creada exitosamente.");
+            } else {
+              System.out.println("Error al crear la cuenta.");
+            }
+            break;
+          }
+
+          case 2 : {
+            System.out.print("\nIngrese su NIP: ");
+            String pin = uwu.nextLine();
+
+            Cuenta cuentaActual = buscarCuentaPorNIP(cuentas, pin);
+            if (cuentaActual != null) {
+              mostrarMenuCuenta(uwu, cuentaActual, portafolio);
+            } else {
+              throw new EntradaInvalida("NIP inválido. Intente nuevamente.");
+            }
+            break;
+          }
+
+          case 3 : {
+            System.out.println("\n--- PORTAFOLIO ---");
+            portafolio.mostrarCuentas();
+            System.out.println("Saldo total: $" + portafolio.sumaSaldo());
+            break;
+          }
+
+          case 4 : {
+            GeneradorTXT.exportarPortafolio(portafolio, "portafolio.txt");
+            System.out.println(" Portafolio exportado correctamente.");
+            break;
+          }
+
+          case 0 : {
+            System.out.println("👋 ¡Gracias por usar PUMABANK!");
+            salir = true;
+          }
+
+          default : throw new EntradaInvalida("Opción fuera del rango del menú.");
+        }
+
+      } catch (EntradaInvalida e) {
+        System.out.println("⚠️ Error: " + e.getMessage());
+      } catch (NumberFormatException | InputMismatchException e) {
+        System.out.println("⚠️ Entrada inválida. Por favor ingrese un número válido.");
+        uwu.nextLine();
+      } catch (Exception e) {
+        System.out.println("⚠️ Error inesperado: " + e.getMessage());
+      }
+    }
+
+    uwu.close();
+  }
+
+  private static Cuenta buscarCuentaPorNIP(List<Cuenta> cuentas, String pin) {
+    for (Cuenta c : cuentas) {
+      if (c.getNIP().equals(pin)) {
+        return c;
+      }
+    }
+    return null;
+  }
+
+  private static void mostrarMenuCuenta(Scanner uwu, Cuenta cuenta, Portafolio portafolio) {
+    GestorAlertas gestor = new GestorAlertas(cuenta);
+    ClienteObservador clienteObs = new ClienteObservador(cuenta.getCliente());
+    gestor.agregarObservador(clienteObs);
+
+    boolean salirCuenta = false;
+
+    while (!salirCuenta) {
+      try {
+        System.out.println("\n--- MENU DE CUENTA: " + cuenta.getCliente() + " ---");
+        System.out.println("1. Consultar saldo");
+        System.out.println("2. Retirar");
+        System.out.println("3. Depositar");
+        System.out.println("4. Agregar al Portafolio");
+        System.out.println("5. Exportar información a TXT");
+        System.out.println("6. Contratar servicios");
+        System.out.println("0. Salir");
+        System.out.print("Seleccione una opción: ");
+
+        int opcion = Integer.parseInt(uwu.nextLine().trim());
+
+        switch (opcion) {
+          case 1 : 
             System.out.println("Saldo actual: $" + cuenta.getSaldo());
-            System.out.println("Cuanto dinero deseas retirar");
-            double retiro = uwu.nextDouble();
+            break;
+
+          case 2 : {
+            System.out.println("Saldo actual: $" + cuenta.getSaldo());
+            System.out.print("Monto a retirar: ");
+            double retiro = Double.parseDouble(uwu.nextLine().trim());
+            if (retiro <= 0) throw new EntradaInvalida("El monto debe ser mayor que 0.");
             cuenta.retirar(retiro);
+            if (retiro > cuenta.getSaldo()) {
+            gestor.generarAlerta("Cuenta sobregirada por retiro de $" + retiro);
+             }
             break;
-          case 2:
+          }
+
+          case 3 : {
             System.out.println("Saldo actual: $" + cuenta.getSaldo());
-            System.out.print("Cuanto dinero deseas depositar: ");
-            double deposito = uwu.nextDouble();
-            uwu.nextLine();
+            System.out.print("Monto a depositar: ");
+            double deposito = Double.parseDouble(uwu.nextLine().trim());
+            if (deposito <= 0) throw new EntradaInvalida("El monto debe ser positivo.");
             cuenta.depositar(deposito);
+            if (deposito > 100000) {
+              gestor.generarAlerta("Deposito mayor a $100,000 .");
+            }
             break;
-          case 3:
+          }
+
+          case 4 : {
+            portafolio.agregarCuenta(cuenta);
+            System.out.println(" Cuenta agregada al portafolio.");
+            break;
+          }
+
+          case 5 : {
+            GeneradorTXT.exportarCuenta(cuenta, cuenta.getCliente() + "_info.txt");  
+            System.out.println(" Informacion exportada a archivo.");
+            break;
+          }
+          case 6:
             if (cuenta.getEstado().getEstado().equals("Activa")) {
               ServAdicional servicio = new serviciosextra.CuentaBase(cuenta);
               boolean menuServicios = true;
@@ -167,23 +226,22 @@ public class Main {
               System.out.println("No puedes contratar servicios si tu cuenta no está activa.");
             }
             break;
-          case 4:
-            System.out.println(cuenta.desc());
+
+          case 0 : salirCuenta = true;
             break;
-          case 0:
-            System.out.println("Saliendo del menu de cuenta...\n");
-            salirCuenta = true;
-            break;
-          default:
-            System.out.println("Opcion no valida. Intente nuevamente.\n");
-  
+
+          default : throw new EntradaInvalida("Opcion fuera del rango del menu.");
+            
         }
-      
-      } else {
-        System.out.println("La cuenta no se encuentra activa (estado: " 
-        + cuenta.getEstado().getEstado() + "). Regresando al menu principal...\n");
-        salirCuenta = true;      
+
+      } catch (EntradaInvalida e) {
+        System.out.println("⚠️ " + e.getMessage());
+      } catch (NumberFormatException e) {
+        System.out.println("⚠️ Ingrese un numero valido.");
+      } catch (Exception e) {
+        System.out.println("⚠️ Error inesperado: " + e.getMessage());
       }
     }
   }
 }
+

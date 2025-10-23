@@ -1,0 +1,5 @@
+Portafolio de Cuentas
+
+Cuenta de LUIS ,  Saldo disponible: $-300.0 , Estado de la cuenta: cuentas.EstadoSobregirada@266474c2
+
+Saldo total del portafolio: $-300.0
