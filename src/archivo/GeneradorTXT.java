@@ -11,6 +11,20 @@ import cuentas.Portafolio;
 public class GeneradorTXT {
 
   /**
+   * Exporta contenido arbitrario a un archivo txt
+   * @param nombreArchivo Nombre del archivo a generar
+   * @param contenido Contenido a escribir en el archivo
+   */
+  public static void exportarContenido(String nombreArchivo, String contenido) {
+    try (FileWriter writer = new FileWriter(nombreArchivo)) {
+      writer.write(contenido);
+      System.out.println("Archivo " + nombreArchivo + " generado con éxito.");
+    } catch (IOException e) {
+      System.out.println("Error al generar el archivo: " + e.getMessage());
+    }
+  }
+
+  /**
    * Exporta registro mensual de la cuenta a un archivo txt
    * @param cuenta Cuenta de los datos que se exportann.
    * @param nombreArchivo Nombre del archivo .txt

@@ -7,6 +7,8 @@ import serviciosextra.*;
 import observer.*;
 import archivo.*;
 import excepciones.*;
+import acceso.*;
+import procesos.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -27,10 +29,18 @@ public class Main {
 
     List<Cuenta> cuentas = new ArrayList<>();
     Portafolio portafolio = new Portafolio();
+    ProcesoMensual procesoMensual = new ProcesoMensual();
 
     // Cuentas de prueba 
-    cuentas.add(new Cuenta("LUIS", 3000.0, new InteresMensual(), new EstadoActiva(), "1212"));
-    cuentas.add(new Cuenta("JULIO", 200.0, new InteresMensual(), new EstadoCerrada(), "7777"));
+    Cuenta cuentaLuis = new Cuenta("LUIS", 3000.0, new InteresMensual(), new EstadoActiva(), "1212");
+    Cuenta cuentaJulio = new Cuenta("JULIO", 200.0, new InteresMensual(), new EstadoCerrada(), "7777");
+    
+    cuentas.add(cuentaLuis);
+    cuentas.add(cuentaJulio);
+    
+    // Agregar cuentas al proceso mensual
+    procesoMensual.agregarCuenta(cuentaLuis);
+    procesoMensual.agregarCuenta(cuentaJulio);
 
     System.out.println("\n--- Bienvenido a PUMABANK ---");
 
@@ -41,6 +51,7 @@ public class Main {
         System.out.println("2. Ingresar NIP");
         System.out.println("3. Ver Portafolio");
         System.out.println("4. Exportar Portafolio");
+        System.out.println("5. Ejecutar Proceso Mensual");
         System.out.println("0. Salir");
         System.out.print("Seleccione una opcion: ");
 
@@ -65,7 +76,7 @@ public class Main {
 
             Cuenta cuentaActual = buscarCuentaPorNIP(cuentas, pin);
             if (cuentaActual != null) {
-              mostrarMenuCuenta(uwu, cuentaActual, portafolio);
+              mostrarMenuCuenta(uwu, cuentaActual, portafolio, procesoMensual);
             } else {
               throw new EntradaInvalida("NIP inválido. Intente nuevamente.");
             }
@@ -82,6 +93,13 @@ public class Main {
           case 4 : {
             GeneradorTXT.exportarPortafolio(portafolio, "portafolio.txt");
             System.out.println(" Portafolio exportado correctamente.");
+            break;
+          }
+
+          case 5 : {
+            System.out.println("\n--- EJECUTANDO PROCESO MENSUAL ---");
+            procesoMensual.ejecutarProcesoMensual();
+            System.out.println("Proceso mensual completado. Se han generado los reportes correspondientes.");
             break;
           }
 
@@ -115,10 +133,20 @@ public class Main {
     return null;
   }
 
-  private static void mostrarMenuCuenta(Scanner uwu, Cuenta cuenta, Portafolio portafolio) {
+  private static void mostrarMenuCuenta(Scanner uwu, Cuenta cuenta, Portafolio portafolio, ProcesoMensual procesoMensual) {
     GestorAlertas gestor = new GestorAlertas(cuenta);
     ClienteObservador clienteObs = new ClienteObservador(cuenta.getCliente());
     gestor.agregarObservador(clienteObs);
+    
+    AccesoRemoto acceso = new AccesoRemoto(cuenta);
+    try {
+        System.out.print("\nPor favor, confirme su NIP para acceder a las operaciones: ");
+        String nip = uwu.nextLine();
+        acceso.verificarNIP(nip);
+    } catch (EntradaInvalida e) {
+        System.out.println("⚠️ Error de autenticación: " + e.getMessage());
+        return;
+    }
 
     boolean salirCuenta = false;
 
@@ -138,29 +166,43 @@ public class Main {
 
         switch (opcion) {
           case 1 : 
-            System.out.println("Saldo actual: $" + cuenta.getSaldo());
+            try {
+                System.out.println("Saldo actual: $" + acceso.consultarSaldo());
+            } catch (EntradaInvalida e) {
+                System.out.println("⚠️ Error: " + e.getMessage());
+            }
             break;
 
           case 2 : {
-            System.out.println("Saldo actual: $" + cuenta.getSaldo());
-            System.out.print("Monto a retirar: ");
-            double retiro = Double.parseDouble(uwu.nextLine().trim());
-            if (retiro <= 0) throw new EntradaInvalida("El monto debe ser mayor que 0.");
-            cuenta.retirar(retiro);
-            if (retiro > cuenta.getSaldo()) {
-            gestor.generarAlerta("Cuenta sobregirada por retiro de $" + retiro);
-             }
+            try {
+                System.out.println("Saldo actual: $" + acceso.consultarSaldo());
+                System.out.print("Monto a retirar: ");
+                double retiro = Double.parseDouble(uwu.nextLine().trim());
+                acceso.retirar(retiro);
+                if (retiro > cuenta.getSaldo()) {
+                    gestor.generarAlerta("Cuenta sobregirada por retiro de $" + retiro);
+                }
+                procesoMensual.registrarSaldoDiario(cuenta);
+                procesoMensual.registrarOperacion(cuenta, "Retiro por $" + retiro);
+            } catch (EntradaInvalida e) {
+                System.out.println("⚠️ Error: " + e.getMessage());
+            }
             break;
           }
 
           case 3 : {
-            System.out.println("Saldo actual: $" + cuenta.getSaldo());
-            System.out.print("Monto a depositar: ");
-            double deposito = Double.parseDouble(uwu.nextLine().trim());
-            if (deposito <= 0) throw new EntradaInvalida("El monto debe ser positivo.");
-            cuenta.depositar(deposito);
-            if (deposito > 100000) {
-              gestor.generarAlerta("Deposito mayor a $100,000 .");
+            try {
+                System.out.println("Saldo actual: $" + acceso.consultarSaldo());
+                System.out.print("Monto a depositar: ");
+                double deposito = Double.parseDouble(uwu.nextLine().trim());
+                acceso.depositar(deposito);
+                if (deposito > 100000) {
+                    gestor.generarAlerta("Depósito mayor a $100,000");
+                }
+                procesoMensual.registrarSaldoDiario(cuenta);
+                procesoMensual.registrarOperacion(cuenta, "Depósito por $" + deposito);
+            } catch (EntradaInvalida e) {
+                System.out.println("⚠️ Error: " + e.getMessage());
             }
             break;
           }
@@ -186,7 +228,8 @@ public class Main {
                 System.out.println("1. Seguro Antifraude (+$1500)");
                 System.out.println("2. Programa de Recompensas (+$0)");
                 System.out.println("3. Alertas Premium (+$600)");
-                System.out.println("4. Ver servicios contradaos.");
+                System.out.println("4. Plan Premium Todo Incluido (25% descuento)");
+                System.out.println("5. Ver servicios contratados");
                 System.out.println("0. Salir");
 
                 int serv = uwu.nextInt();
@@ -207,11 +250,23 @@ public class Main {
                     break;
                   case 3:
                     servicio = new serviciosextra.AlertasPremium(servicio, cuenta);
-                     double precioss = cuenta.getSaldo() - 600;
+                    double precioss = cuenta.getSaldo() - 600;
                     cuenta.setSaldo(precioss);
                     System.out.println("Alertas Premium contratadas.");
                     break;
                   case 4:
+                    if (cuenta.getSaldo() >= 50000) {
+                        // Cambiar a estrategia Premium
+                        cuenta.setEstrategiaInteres(new intereses.InteresPremium());
+                        servicio = new serviciosextra.BeneficiosPremium(servicio, cuenta);
+                        System.out.println("Plan Premium activado exitosamente.");
+                        BeneficiosPremium premium = (BeneficiosPremium) servicio;
+                        System.out.println(premium.proyectarBeneficios());
+                    } else {
+                        System.out.println("El Plan Premium requiere un saldo mínimo de $50,000");
+                    }
+                    break;
+                  case 5:
                     System.out.println("Descripciones: " + servicio.getDesc());
                     System.out.println("Costo total mensual: $" + servicio.getCosto());
                     break;

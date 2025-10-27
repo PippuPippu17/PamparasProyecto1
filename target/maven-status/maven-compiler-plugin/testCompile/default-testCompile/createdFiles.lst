@@ -1,0 +1,5 @@
+test\cuentas\CuentaTest.class
+test\serviciosextra\GestorAlertasTest.class
+test\cuentas\EstadoCongeladaTest.class
+test\excepciones\ExcepcionEntradaInvalidaTest.class
+test\observer\GestorAlertasTest.class
