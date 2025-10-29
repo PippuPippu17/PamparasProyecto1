@@ -4,6 +4,10 @@
 # Maven build directory
 target/
 
+# Eclipse/IDE build directories
+bin/
+out/
+
 # Log files
 *.log
 
