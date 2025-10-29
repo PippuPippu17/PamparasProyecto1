@@ -55,10 +55,80 @@ mvn exec:java
 ```
 
 ### Usando Docker
-```bash
-# Construir la imagen
-docker build -t pumabank:1.0 .
 
-# Ejecutar el contenedor
-docker run -it --rm pumabank:1.0
+#### Requisitos Previos
+- Tener Docker Desktop instalado y corriendo
+- Verificar instalacion: `docker --version`
+
+#### Paso 1: Navegar al Directorio del Proyecto
+```bash
+cd "c:\Users\julio\Documents\7SemestreFacCiencias\Modelado y Programación\Proyecto 1\PamparasProyecto1"
 ```
+
+#### Paso 2: Construir la Imagen Docker
+```bash
+docker build -t pumabank:1.0 .
+```
+
+**Este proceso incluye:**
+- Descarga de imagen base Java 21
+- Descarga de dependencias Maven
+- Compilacion del codigo fuente
+- Empaquetado de la aplicacion
+- Creacion de imagen optimizada (~400 MB)
+
+**Tiempo estimado:** 3-5 minutos (primera vez)
+
+#### Paso 3: Verificar la Imagen Creada
+```bash
+docker images
+```
+
+Deberia aparecer:
+```
+REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+pumabank     1.0       xxxxxxxxxxxx   X minutes ago    ~400 MB
+```
+
+#### Paso 4: Ejecutar el Contenedor
+```bash
+docker run -it --rm --name pumabank-app pumabank:1.0
+```
+
+**Banderas explicadas:**
+- `-it`: Modo interactivo con terminal
+- `--rm`: Elimina el contenedor automaticamente al salir
+- `--name pumabank-app`: Nombre del contenedor
+
+#### Comandos Utiles
+
+**Ver contenedores en ejecucion:**
+```bash
+docker ps
+```
+
+**Ver logs:**
+```bash
+docker logs pumabank-app
+```
+
+**Detener contenedor:**
+```bash
+docker stop pumabank-app
+```
+
+**Eliminar imagen:**
+```bash
+docker rmi pumabank:1.0
+```
+
+#### Reconstruir despues de Cambios
+Si modificas el codigo fuente:
+```bash
+docker build --no-cache -t pumabank:1.0 .
+```
+
+#### Solucion de Problemas
+- **Error de conexion a Docker:** Asegurate de que Docker Desktop este abierto y corriendo
+- **Compilacion falla:** Verifica que compile localmente primero con `mvn clean compile`
+- **Puerto en uso:** Detener contenedor anterior con `docker stop pumabank-app`
