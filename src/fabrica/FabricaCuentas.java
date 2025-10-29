@@ -5,23 +5,26 @@ import intereses.*;
 import java.util.Scanner;
 
 /**
- * Clase para la creacion de cuenta bancaria
+ * Clase para la creacion de cuentas bancarias.
+ * Utiliza el patron Factory Method para crear cuentas.
+ * @author LasPamparas
+ * @version 1.0
  */
 public class FabricaCuentas {
 
   private static Scanner uwu = new Scanner(System.in);
 
   /**
-   * Crea cuenta bancaria pidiendo datos al usuario.
-   * @return una instancia de Cuenta 
+   * Crea una cuenta bancaria pidiendo los datos al usuario.
+   * @return una instancia de Cuenta.
    */
   public static Cuenta crearCuenta() {
-    System.out.println("\n--- CREACIÓN DE CUENTA ---");
+    System.out.println("\n--- CREACION DE CUENTA ---");
 
     System.out.print("Nombre de cliente: ");
     String cliente = uwu.nextLine();
 
-    System.out.print("NIP de 4 dígitos: ");
+    System.out.print("NIP de 4 digitos: ");
     String nip = uwu.nextLine();
 
     System.out.print("Saldo inicial: ");
@@ -44,4 +47,3 @@ public class FabricaCuentas {
     return cuenta;
   }
 }
-

@@ -1,4 +1,4 @@
-package test.fabrica;
+package fabrica;
 
 import fabrica.*;
 import cuentas.*;
@@ -10,10 +10,10 @@ public class FabricaCuentasTest {
 
     @Test
     public void testCrearCuentaDevuelveCuentaNoNula() {
-        // La fábrica en esta versión solicita datos por consola; para la prueba
-        // creamos la cuenta manualmente usando la misma lógica.
+        // La fabrica en esta version solicita datos por consola; para la prueba
+        // creamos la cuenta manualmente usando la misma logica.
         Cuenta cuenta = new Cuenta("Carlos", 1500, new InteresMensual(), new EstadoActiva(), "1212");
-        assertNotNull(cuenta, "Fábrica debe crear una cuenta válida");
+        assertNotNull(cuenta, "Fabrica debe crear una cuenta valida");
     }
 
     @Test

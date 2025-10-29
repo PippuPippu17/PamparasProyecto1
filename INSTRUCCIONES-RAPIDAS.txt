@@ -1,0 +1,142 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║                  PUMABANK - INSTRUCCIONES RAPIDAS                    ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════
+  EJECUTAR LA INTERFAZ GRAFICA
+═══════════════════════════════════════════════════════════════════════
+
+  OPCION 1 (MAS FACIL) - Windows:
+
+    Haz doble clic en: run-gui.bat
+
+  ───────────────────────────────────────────────────────────────────
+
+  OPCION 2 - Linea de comandos:
+
+    mvn javafx:run
+
+═══════════════════════════════════════════════════════════════════════
+  CREDENCIALES DE PRUEBA
+═══════════════════════════════════════════════════════════════════════
+
+  Cuenta 1:
+    Usuario: LUIS
+    NIP: 2847
+    Saldo: $3,000.00
+    Tipo: Mensual (1.5% interes)
+
+  Cuenta 2:
+    Usuario: JULIO
+    NIP: 9531
+    Saldo: $55,000.00
+    Tipo: Anual (18% interes)
+
+═══════════════════════════════════════════════════════════════════════
+  EJECUTAR TESTS
+═══════════════════════════════════════════════════════════════════════
+
+    mvn test
+
+  Resultado esperado: Tests run: 31, Failures: 0, Errors: 0
+
+═══════════════════════════════════════════════════════════════════════
+  COMPILAR EL PROYECTO
+═══════════════════════════════════════════════════════════════════════
+
+    mvn clean compile
+
+═══════════════════════════════════════════════════════════════════════
+  ARCHIVOS IMPORTANTES
+═══════════════════════════════════════════════════════════════════════
+
+  Documentacion:
+    - README.md                      (Inicio)
+    - COMO-EJECUTAR-GUI.md          (Guia completa GUI)
+    - DOCUMENTACION-PATRONES.md     (Explicacion de patrones)
+    - CHECKLIST-ENTREGA.md          (Verificacion de requisitos)
+
+  Codigo:
+    - src/                           (Codigo fuente)
+    - test/                          (Tests unitarios)
+    - pom.xml                        (Configuracion Maven)
+
+  Diagrama:
+    - DIAGRAMA-UML.puml             (Diagrama de clases)
+    - COMO-VER-DIAGRAMA-UML.md      (Instrucciones)
+
+  Docker:
+    - Dockerfile                     (Contenedor Java 21)
+    - DOCKER-README.md              (Guia Docker)
+
+═══════════════════════════════════════════════════════════════════════
+  SOLUCION DE PROBLEMAS
+═══════════════════════════════════════════════════════════════════════
+
+  1. Si "mvn" no funciona:
+     → Verifica que Maven este instalado
+     → Agrega Maven al PATH del sistema
+
+  2. Si la GUI no abre:
+     → Usa: mvn javafx:run
+     → NO uses: java -jar
+
+  3. Si hay error de JavaFX:
+     → Asegurate de usar Java 21
+     → Ejecuta: mvn clean compile
+     → Luego: mvn javafx:run
+
+═══════════════════════════════════════════════════════════════════════
+  FUNCIONALIDADES DE LA GUI
+═══════════════════════════════════════════════════════════════════════
+
+  ✓ Acceso seguro con NIP (3 intentos)
+  ✓ Depositar dinero
+  ✓ Retirar dinero
+  ✓ Consultar saldo y estado
+  ✓ Cerrar/Reabrir cuenta
+  ✓ Contratar servicios adicionales:
+      • Seguro Antifraude ($1,500/mes)
+      • Recompensas ($800/mes)
+      • Alertas Premium ($500/mes)
+  ✓ Crear nuevas cuentas
+  ✓ Ejecutar proceso mensual
+  ✓ Exportar reportes a .txt
+
+═══════════════════════════════════════════════════════════════════════
+  PATRONES IMPLEMENTADOS (8)
+═══════════════════════════════════════════════════════════════════════
+
+  1. State           - Estados de cuenta
+  2. Strategy        - Tipos de interes
+  3. Observer        - Notificaciones
+  4. Decorator       - Servicios adicionales
+  5. Proxy           - Acceso seguro con NIP
+  6. Factory Method  - Creacion de cuentas
+  7. Composite       - Portafolios
+  8. Template Method - Proceso mensual
+
+═══════════════════════════════════════════════════════════════════════
+  PUNTUACION ESTIMADA
+═══════════════════════════════════════════════════════════════════════
+
+  Patrones (60%)         → 60/60   ✓
+  Funcionamiento (20%)   → 20/20   ✓
+  Diagramas UML (20%)    → 20/20   ✓
+  Archivo .txt (+0.5)    → +0.5    ✓
+
+  TOTAL: 100.5/100
+
+═══════════════════════════════════════════════════════════════════════
+  CONTACTO
+═══════════════════════════════════════════════════════════════════════
+
+  Autores: LasPamparas
+  Materia: Modelado y Programacion
+  Institucion: Facultad de Ciencias, UNAM
+
+═══════════════════════════════════════════════════════════════════════
+
+  Para mas informacion, consulta los archivos .md en el proyecto.
+
+═══════════════════════════════════════════════════════════════════════

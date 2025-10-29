@@ -17,26 +17,40 @@ import java.util.Scanner;
 
 /**
  * Clase principal del sistema PumaBank.
- * Contiene los menús y opciones interactivas para el usuario,
+ * Contiene los menus y opciones interactivas para el usuario,
  * con validaciones y manejo de excepciones personalizadas.
+ * @author julio
+ * @version 1.0
+ * 
  */
 public class Main {
 
+  /**
+   * Metodo principal que inicia la aplicacion PumaBank.
+   * Presenta un menu interactivo para que los usuarios administren sus cuentas.
+   * 
+   * @param args Los argumentos de la linea de comandos (no se utilizan).
+   */
   public static void main(String[] args) {
     Scanner uwu = new Scanner(System.in);
     int opcionPrincipal;
     boolean salir = false;
 
     List<Cuenta> cuentas = new ArrayList<>();
-    Portafolio portafolio = new Portafolio();
+    // El Portafolio ahora requiere un nombre en su constructor.
+    Portafolio portafolio = new Portafolio("Portafolio Principal");
     ProcesoMensual procesoMensual = new ProcesoMensual();
 
     // Cuentas de prueba 
-    Cuenta cuentaLuis = new Cuenta("LUIS", 3000.0, new InteresMensual(), new EstadoActiva(), "1212");
-    Cuenta cuentaJulio = new Cuenta("JULIO", 200.0, new InteresMensual(), new EstadoCerrada(), "7777");
+    Cuenta cuentaLuis = new Cuenta("LUIS", 3000.0, new InteresMensual(), new EstadoActiva(), "2847");
+    Cuenta cuentaJulio = new Cuenta("JULIO", 200.0, new InteresMensual(), new EstadoCerrada(), "9531");
     
     cuentas.add(cuentaLuis);
     cuentas.add(cuentaJulio);
+
+    // Agregamos las cuentas al portafolio usando el nuevo metodo 'agregar'.
+    portafolio.agregar(cuentaLuis);
+    portafolio.agregar(cuentaJulio);
     
     // Agregar cuentas al proceso mensual
     procesoMensual.agregarCuenta(cuentaLuis);
@@ -62,7 +76,8 @@ public class Main {
             Cuenta nuevaCuenta = FabricaCuentas.crearCuenta();
             if (nuevaCuenta != null) {
               cuentas.add(nuevaCuenta);
-              portafolio.agregarCuenta(nuevaCuenta);
+              // Usamos el nuevo metodo 'agregar'
+              portafolio.agregar(nuevaCuenta);
               System.out.println("Cuenta creada exitosamente.");
             } else {
               System.out.println("Error al crear la cuenta.");
@@ -78,15 +93,14 @@ public class Main {
             if (cuentaActual != null) {
               mostrarMenuCuenta(uwu, cuentaActual, portafolio, procesoMensual);
             } else {
-              throw new EntradaInvalida("NIP inválido. Intente nuevamente.");
+              throw new EntradaInvalida("NIP invalido. Intente nuevamente.");
             }
             break;
           }
 
           case 3 : {
-            System.out.println("\n--- PORTAFOLIO ---");
-            portafolio.mostrarCuentas();
-            System.out.println("Saldo total: $" + portafolio.sumaSaldo());
+            // Usamos el nuevo metodo 'desc' que devuelve toda la informacion formateada.
+            System.out.println(portafolio.desc());
             break;
           }
 
@@ -108,13 +122,13 @@ public class Main {
             salir = true;
           }
 
-          default : throw new EntradaInvalida("Opción fuera del rango del menú.");
+          default : throw new EntradaInvalida("Opcion fuera del rango del menu.");
         }
 
       } catch (EntradaInvalida e) {
         System.out.println("⚠️ Error: " + e.getMessage());
       } catch (NumberFormatException | InputMismatchException e) {
-        System.out.println("⚠️ Entrada inválida. Por favor ingrese un número válido.");
+        System.out.println("⚠️ Entrada invalida. Por favor ingrese un numero valido.");
         uwu.nextLine();
       } catch (Exception e) {
         System.out.println("⚠️ Error inesperado: " + e.getMessage());
@@ -124,6 +138,13 @@ public class Main {
     uwu.close();
   }
 
+  /**
+   * Busca una cuenta en la lista de cuentas por su NIP.
+   * 
+   * @param cuentas La lista de cuentas en la que buscar.
+   * @param pin El NIP de la cuenta a buscar.
+   * @return La cuenta si se encuentra, o null si no.
+   */
   private static Cuenta buscarCuentaPorNIP(List<Cuenta> cuentas, String pin) {
     for (Cuenta c : cuentas) {
       if (c.getNIP().equals(pin)) {
@@ -133,6 +154,14 @@ public class Main {
     return null;
   }
 
+  /**
+   * Muestra el menu de operaciones para una cuenta especifica.
+   * 
+   * @param uwu El objeto Scanner para la entrada del usuario.
+   * @param cuenta La cuenta sobre la que se realizaran las operaciones.
+   * @param portafolio El portafolio de cuentas.
+   * @param procesoMensual El proceso mensual a ejecutar.
+   */
   private static void mostrarMenuCuenta(Scanner uwu, Cuenta cuenta, Portafolio portafolio, ProcesoMensual procesoMensual) {
     GestorAlertas gestor = new GestorAlertas(cuenta);
     ClienteObservador clienteObs = new ClienteObservador(cuenta.getCliente());
@@ -144,7 +173,7 @@ public class Main {
         String nip = uwu.nextLine();
         acceso.verificarNIP(nip);
     } catch (EntradaInvalida e) {
-        System.out.println("⚠️ Error de autenticación: " + e.getMessage());
+        System.out.println("⚠️ Error de autenticacion: " + e.getMessage());
         return;
     }
 
@@ -157,10 +186,10 @@ public class Main {
         System.out.println("2. Retirar");
         System.out.println("3. Depositar");
         System.out.println("4. Agregar al Portafolio");
-        System.out.println("5. Exportar información a TXT");
+        System.out.println("5. Exportar informacion a TXT");
         System.out.println("6. Contratar servicios");
         System.out.println("0. Salir");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
 
         int opcion = Integer.parseInt(uwu.nextLine().trim());
 
@@ -197,10 +226,10 @@ public class Main {
                 double deposito = Double.parseDouble(uwu.nextLine().trim());
                 acceso.depositar(deposito);
                 if (deposito > 100000) {
-                    gestor.generarAlerta("Depósito mayor a $100,000");
+                    gestor.generarAlerta("Deposito mayor a $100,000");
                 }
                 procesoMensual.registrarSaldoDiario(cuenta);
-                procesoMensual.registrarOperacion(cuenta, "Depósito por $" + deposito);
+                procesoMensual.registrarOperacion(cuenta, "Deposito por $" + deposito);
             } catch (EntradaInvalida e) {
                 System.out.println("⚠️ Error: " + e.getMessage());
             }
@@ -208,7 +237,7 @@ public class Main {
           }
 
           case 4 : {
-            portafolio.agregarCuenta(cuenta);
+            portafolio.agregar(cuenta);
             System.out.println(" Cuenta agregada al portafolio.");
             break;
           }
@@ -263,7 +292,7 @@ public class Main {
                         BeneficiosPremium premium = (BeneficiosPremium) servicio;
                         System.out.println(premium.proyectarBeneficios());
                     } else {
-                        System.out.println("El Plan Premium requiere un saldo mínimo de $50,000");
+                        System.out.println("El Plan Premium requiere un saldo minimo de $50,000");
                     }
                     break;
                   case 5:
@@ -274,7 +303,7 @@ public class Main {
                     menuServicios = false;
                     break;
                   default:
-                    System.out.println("Opción no válida.");
+                    System.out.println("Opcion no valida.");
                 }
               } 
             } else {
@@ -299,4 +328,3 @@ public class Main {
     }
   }
 }
-

@@ -1,0 +1,11 @@
+# Ignorar archivos innecesarios en la imagen Docker
+target/
+.git/
+.gitignore
+.vscode/
+*.md
+*.txt
+!pom.xml
+.DS_Store
+*.log
+*.tmp

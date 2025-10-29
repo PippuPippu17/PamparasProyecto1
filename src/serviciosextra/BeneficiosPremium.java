@@ -7,19 +7,29 @@ import observer.GestorAlertas;
 /**
  * Implementa beneficios especiales para clientes premium.
  * Combina servicios adicionales y ofrece descuentos.
+ * @author LasPamparas
+ * @version 1.0
  */
 public class BeneficiosPremium extends ServDecorator {
     private static final double DESCUENTO_SERVICIOS = 0.25; // 25% de descuento en servicios
     private GestorAlertas gestor;
     
+    /**
+     * Constructor para el decorador de Beneficios Premium.
+     * @param servicioNormal el servicio base a decorar.
+     * @param cuenta la cuenta asociada.
+     */
     public BeneficiosPremium(ServAdicional servicioNormal, Cuenta cuenta) {
         super(servicioNormal, cuenta);
         this.gestor = new GestorAlertas(cuenta);
         aplicarBeneficiosPremium();
     }
     
+    /**
+     * Aplica los beneficios premium a la cuenta, como alertas, seguro y recompensas mejoradas.
+     */
     private void aplicarBeneficiosPremium() {
-        // Activar alertas premium automáticamente
+        // Activar alertas premium automaticamente
         servicioNormal = new AlertasPremium(servicioNormal, cuenta);
         
         // Activar seguro antifraude con descuento
@@ -44,16 +54,24 @@ public class BeneficiosPremium extends ServDecorator {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     * Agrega la descripcion de los beneficios premium a la descripcion del servicio base.
+     */
     @Override
     public String getDesc() {
-        return servicioNormal.getDesc() + "\n" +
-               "** Cliente Premium **\n" +
-               "- 25% de descuento en servicios adicionales\n" +
-               "- Recompensas duplicadas\n" +
-               "- Atención prioritaria\n" +
-               "- Tasas de interés preferenciales";
+        return servicioNormal.getDesc() + "\n" + 
+               "** Cliente Premium **\n" + 
+               "- 25% de descuento en servicios adicionales\n" + 
+               "- Recompensas duplicadas\n" + 
+               "- Atencion prioritaria\n" + 
+               "- Tasas de interes preferenciales";
     }
 
+    /**
+     * {@inheritDoc}
+     * Aplica un descuento del 25% al costo total de los servicios.
+     */
     @Override
     public double getCosto() {
         // Aplica descuento del 25% al costo total de servicios
@@ -69,16 +87,16 @@ public class BeneficiosPremium extends ServDecorator {
     }
     
     /**
-     * Proyecta los beneficios financieros del plan premium
-     * @return resumen de beneficios proyectados
+     * Proyecta los beneficios financieros del plan premium.
+     * @return un resumen de los beneficios proyectados.
      */
     public String proyectarBeneficios() {
         InteresPremium interesPremium = (InteresPremium) cuenta.getEstrategiaInteres();
         double saldoActual = cuenta.getSaldo();
         
         StringBuilder proyeccion = new StringBuilder();
-        proyeccion.append("\n=== Proyección de Beneficios Premium ===\n");
-        proyeccion.append(String.format("Tasa de interés actual: %.2f%%\n", 
+        proyeccion.append("\n=== Proyeccion de Beneficios Premium ===\n");
+        proyeccion.append(String.format("Tasa de interes actual: %.2f%%\n", 
             interesPremium.getTasaActual(saldoActual)));
         proyeccion.append(String.format("Intereses proyectados: $%.2f\n", 
             interesPremium.proyectarIntereses(saldoActual)));
@@ -86,7 +104,7 @@ public class BeneficiosPremium extends ServDecorator {
             servicioNormal.getCosto() * DESCUENTO_SERVICIOS));
         proyeccion.append("Beneficios adicionales:\n");
         proyeccion.append("- Recompensas duplicadas ($200 por mes)\n");
-        proyeccion.append("- Atención prioritaria\n");
+        proyeccion.append("- Atencion prioritaria\n");
         proyeccion.append("- Servicios premium incluidos\n");
         
         return proyeccion.toString();

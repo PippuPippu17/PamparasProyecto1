@@ -1,4 +1,4 @@
-package test.intereses;
+package intereses;
 
 import intereses.*;
 import cuentas.*;
@@ -11,9 +11,9 @@ public class InteresMensualTest {
     public void testCalculoInteresSobreSaldoMayorA1000() {
         InteresMensual interes = new InteresMensual();
         Cuenta c = new Cuenta("Ana", 2000, interes, new EstadoActiva(), "2222");
-        // la estrategia define el cálculo a partir del saldo
+        // la estrategia define el calculo a partir del saldo
         double interesCalculado = interes.calInteres(c.getSaldo());
-        assertTrue(interesCalculado > 0, "Debe generar interés positivo");
+        assertTrue(interesCalculado > 0, "Debe generar interes positivo");
     }
 
     @Test
@@ -21,6 +21,6 @@ public class InteresMensualTest {
         InteresMensual interes = new InteresMensual();
         Cuenta c = new Cuenta("Ana", 800, interes, new EstadoActiva(), "2222");
         double interesCalculado = interes.calInteres(c.getSaldo());
-        assertEquals(0.0, interesCalculado, 0.0001, "No debe generar interés si el saldo < 1000");
+        assertEquals(0.0, interesCalculado, 0.0001, "No debe generar interes si el saldo < 1000");
     }
 }

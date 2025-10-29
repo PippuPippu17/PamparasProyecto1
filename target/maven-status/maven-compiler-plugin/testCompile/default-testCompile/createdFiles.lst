@@ -1,5 +1,12 @@
-test\cuentas\CuentaTest.class
-test\serviciosextra\GestorAlertasTest.class
-test\cuentas\EstadoCongeladaTest.class
-test\excepciones\ExcepcionEntradaInvalidaTest.class
-test\observer\GestorAlertasTest.class
+cuentas\EstadoSobregiradaTest.class
+cuentas\EstadoCerradaTest.class
+intereses\InteresMensualTest.class
+excepciones\ExcepcionEntradaInvalidaTest.class
+serviciosextra\GestorAlertasTest.class
+cuentas\PortafolioTest.class
+cuentas\EstadoActivaTest.class
+observer\GestorAlertasTest.class
+fabrica\FabricaCuentasTest.class
+archivos\GeneradorTxtTest.class
+cuentas\EstadoCongeladaTest.class
+cuentas\CuentaTest.class

@@ -4,79 +4,107 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Representa Portafolio de cuentas
- *  
- * Administrar varias cuentas, consultarlas, eliminarlas y calcular saldo total
+ * Representa un Portafolio de cuentas que actúa como un Composite en el patron de diseño.
+ * Puede contener tanto Cuentas individuales (hojas) como otros Portafolios (composites).
+ * @author LasPamparas
+ * @version 1.0
  */
-public class Portafolio {
+public class Portafolio implements ComponenteBancario {
 
-  private List<Cuenta> cuentas;
+  private String nombrePortafolio;
+  private List<ComponenteBancario> componentes = new ArrayList<>();
 
-  public Portafolio() {
-    cuentas = new ArrayList<>();
+  /**
+   * Constructor del portafolio.
+   * @param nombrePortafolio El nombre para identificar este portafolio.
+   */
+  public Portafolio(String nombrePortafolio) {
+    this.nombrePortafolio = nombrePortafolio;
   }
 
   /**
-   * Agrega cuenta al portafolio.
-   * 
-   * @param cuenta cuenta a agregar
+   * Agrega un componente bancario (puede ser una Cuenta u otro Portafolio).
+   * @param componente El componente a agregar.
    */
-  public void agregarCuenta(Cuenta cuenta) {
-    cuentas.add(cuenta);
+  public void agregar(ComponenteBancario componente) {
+    componentes.add(componente);
   }
 
   /**
-   * Elimina cuenta del portafolio 
-   * @param cuenta cuenta a eliminar
+   * Remueve un componente bancario.
+   * @param componente El componente a remover.
    */
-  public void eliminarCuenta(Cuenta cuenta) {
-    cuentas.remove(cuenta);
+  public void remover(ComponenteBancario componente) {
+    componentes.remove(componente);
   }
 
   /**
-   * Busca una cuenta en el portafolio por nombre  
-   * @param nombreCliente nombre del cliente
-   * @return cuenta o null si no existe
+   * Devuelve el nombre del portafolio.
+   * @return El nombre del portafolio.
    */
-  public Cuenta buscarCuentaPorNombre(String nombreCliente) {
-    for (Cuenta c : cuentas) {
-      if (c.getCliente().equalsIgnoreCase(nombreCliente)) {
-        return c;
-      }
+  @Override
+  public String getCliente() {
+    return this.nombrePortafolio;
+  }
+
+  /**
+   * Devuelve el saldo total del portafolio, sumando los saldos de todos sus componentes.
+   * @return El saldo total del portafolio.
+   */
+  @Override
+  public double getSaldo() {
+    double saldoTotal = 0;
+    for (ComponenteBancario comp : componentes) {
+      saldoTotal += comp.getSaldo();
     }
-    return null;
+    return saldoTotal;
   }
 
   /**
-   * Muestra la info de todas las cuentas del portafolio
+   * Deposita un monto en cada uno de los componentes del portafolio.
+   * @param monto El monto a depositar.
    */
-  public void mostrarCuentas() {
-    System.out.println("--- Portafolio ---");
-    for (Cuenta c : cuentas) {
-      System.out.println(c.desc());
+  @Override
+  public void depositar(double monto) {
+    System.out.println("--- Depositando " + monto + " en cada componente del portafolio: " + nombrePortafolio + " ---");
+    for (ComponenteBancario comp : componentes) {
+      comp.depositar(monto);
     }
   }
 
   /**
-   * Suma los saldos de TODAS las cuentas del portafolio
-   * 
-   *@return cadena con saldo total
+   * Retira un monto de cada uno de los componentes del portafolio.
+   * @param monto El monto a retirar.
    */
-  public String sumaSaldo() {
-    double total = 0.0;
-    for (Cuenta c : cuentas) {
-      total += c.getSaldo();
+  @Override
+  public void retirar(double monto) {
+    System.out.println("--- Retirando " + monto + " de cada componente del portafolio: " + nombrePortafolio + " ---");
+    for (ComponenteBancario comp : componentes) {
+      comp.retirar(monto);
     }
-    return "Saldo total del portafolio: $" + total;
   }
 
   /**
-   * Devuelve la lista completa de cuentas en el portafolio
-   * 
-   * @return lista de cuentas
+   * Devuelve una descripcion detallada del portafolio y sus componentes.
+   * @return Una cadena con la descripcion del portafolio.
    */
-  public List<Cuenta> getCuentas() {
-    return cuentas;
+  @Override
+  public String desc() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("\n========== Portafolio: ").append(nombrePortafolio).append(" ==========\n");
+    for (ComponenteBancario comp : componentes) {
+      sb.append("  -> ").append(comp.desc()).append("\n");
+    }
+    sb.append("Saldo Total del Portafolio '" + nombrePortafolio + "': $").append(getSaldo());
+    sb.append("\n==============================================\n");
+    return sb.toString();
+  }
+
+  /**
+   * Devuelve la lista de componentes para operaciones especificas del cliente.
+   * @return La lista de componentes bancarios.
+   */
+  public List<ComponenteBancario> getComponentes() {
+    return componentes;
   }
 }
-

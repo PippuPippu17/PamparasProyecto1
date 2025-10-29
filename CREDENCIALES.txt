@@ -1,0 +1,41 @@
+CREDENCIALES DE ACCESO - PUMABANK
+==================================
+
+CUENTAS DE PRUEBA:
+
+Usuario: LUIS
+NIP: 2847
+Saldo inicial: $3,000.00
+Tipo de cuenta: Mensual (1.5% de interes)
+
+Usuario: JULIO
+NIP: 9531
+Saldo inicial: $55,000.00
+Tipo de cuenta: Anual (5.5% de interes)
+
+
+NOTAS IMPORTANTES:
+
+- El NIP debe tener 4 digitos numericos
+- Por seguridad, los 4 digitos deben ser diferentes
+- Ejemplos de NIPs invalidos: 1111, 2222, 1122, etc.
+
+
+SISTEMA DE INTENTOS:
+
+El sistema permite maximo 3 intentos de acceso. Despues del tercer
+intento fallido, la cuenta se bloquea por seguridad.
+
+Despues de cada intento fallido, el sistema muestra cuantos intentos
+quedan disponibles.
+
+
+COMO USAR:
+
+1. Ejecutar la aplicacion con: mvn javafx:run
+2. En la pestaña "Acceso a Cuenta", ingresar el usuario
+3. Ingresar el NIP de 4 digitos
+4. Click en "Iniciar Sesion"
+
+Si el NIP es correcto, se abre el dashboard de la cuenta con todas
+las operaciones disponibles.

@@ -8,12 +8,12 @@ import java.util.Map;
 
 import archivo.GeneradorTXT;
 import cuentas.Cuenta;
-import cuentas.EstadoSobregirada;
-import observer.GestorAlertas;
 
 /**
  * Clase que maneja los procesos mensuales de las cuentas bancarias.
- * Incluye revisión de sobregiros, cálculo de intereses y generación de reportes.
+ * Incluye revision de sobregiros, calculo de intereses y generacion de reportes.
+ * @author LasPamparas
+ * @version 1.0
  */
 public class ProcesoMensual {
     private List<Cuenta> cuentas;
@@ -21,6 +21,10 @@ public class ProcesoMensual {
     private Map<Cuenta, List<String>> registroOperaciones;
     private LocalDate fechaUltimoCorte;
     
+    /**
+     * Constructor de la clase ProcesoMensual.
+     * Inicializa las listas y mapas necesarios.
+     */
     public ProcesoMensual() {
         this.cuentas = new ArrayList<>();
         this.saldosHistoricos = new HashMap<>();
@@ -29,8 +33,8 @@ public class ProcesoMensual {
     }
     
     /**
-     * Agrega una cuenta al proceso mensual
-     * @param cuenta Cuenta a agregar
+     * Agrega una cuenta al proceso mensual.
+     * @param cuenta Cuenta a agregar.
      */
     public void agregarCuenta(Cuenta cuenta) {
         cuentas.add(cuenta);
@@ -40,7 +44,9 @@ public class ProcesoMensual {
     }
     
     /**
-     * Registra una operación en el historial de la cuenta
+     * Registra una operacion en el historial de la cuenta.
+     * @param cuenta La cuenta en la que se registra la operacion.
+     * @param operacion La descripcion de la operacion.
      */
     public void registrarOperacion(Cuenta cuenta, String operacion) {
         List<String> operaciones = registroOperaciones.get(cuenta);
@@ -50,7 +56,8 @@ public class ProcesoMensual {
     }
     
     /**
-     * Registra el saldo diario de la cuenta
+     * Registra el saldo diario de la cuenta.
+     * @param cuenta La cuenta cuyo saldo se registra.
      */
     public void registrarSaldoDiario(Cuenta cuenta) {
         List<Double> saldos = saldosHistoricos.get(cuenta);
@@ -60,7 +67,9 @@ public class ProcesoMensual {
     }
     
     /**
-     * Calcula el saldo promedio del mes
+     * Calcula el saldo promedio del mes.
+     * @param cuenta La cuenta para la que se calcula el saldo promedio.
+     * @return El saldo promedio del mes.
      */
     private double calcularSaldoPromedio(Cuenta cuenta) {
         List<Double> saldos = saldosHistoricos.get(cuenta);
@@ -71,49 +80,43 @@ public class ProcesoMensual {
     }
     
     /**
-     * Ejecuta el proceso mensual para todas las cuentas registradas
+     * Ejecuta el proceso mensual para todas las cuentas registradas.
+     * Utiliza el patron Template Method mediante ProcesoMensualStandard.
      */
     public void ejecutarProcesoMensual() {
         LocalDate fechaActual = LocalDate.now();
         if (fechaActual.getMonth() == fechaUltimoCorte.getMonth()) {
-            return; // Ya se ejecutó el proceso este mes
+            return; // Ya se ejecuto el proceso este mes
         }
-        
+
+        // Crear instancia del Template Method con implementacion estandar
+        ProcesoMensualTemplate procesoTemplate = new ProcesoMensualStandard();
+        int mesActual = fechaActual.getMonthValue(); // 1-12
+
         for (Cuenta cuenta : cuentas) {
-            GestorAlertas gestor = new GestorAlertas(cuenta);
-            
-            // 1. Revisión de sobregiros y aplicación de cargos
-            if (cuenta.getSaldo() < 0) {
-                double cargoSobregiro = 500.0;
-                cuenta.setSaldo(cuenta.getSaldo() - cargoSobregiro);
-                registrarOperacion(cuenta, "Cargo por sobregiro aplicado: $" + cargoSobregiro);
-                gestor.generarAlerta("Se ha aplicado un cargo por sobregiro de $" + cargoSobregiro);
-            }
-            
-            // 2. Cálculo y aplicación de intereses
+            // Calcular saldo promedio antes de ejecutar el template
             double saldoPromedio = calcularSaldoPromedio(cuenta);
             registrarOperacion(cuenta, "Saldo promedio mensual: $" + saldoPromedio);
-            
-            if (cuenta.getEstado() instanceof EstadoSobregirada) {
-                registrarOperacion(cuenta, "No se generaron intereses por estado sobregirado");
-            } else {
-                cuenta.aplicarInteres();
-                registrarOperacion(cuenta, "Intereses aplicados según plan " + 
-                    cuenta.getEstrategiaInteres().getNombre());
-            }
-            
-            // 3. Generación de reporte mensual
+
+            // EJECUTAR TEMPLATE METHOD - define la secuencia de pasos
+            procesoTemplate.ejecutarProcesoMensual(cuenta, mesActual, saldoPromedio);
+
+            // Registrar en el historial
+            registrarOperacion(cuenta, "Proceso mensual ejecutado correctamente");
+
+            // Generar reporte completo con historial
             generarReporteMensual(cuenta);
-            
-            // Limpiar históricos del mes
+
+            // Limpiar historicos del mes
             saldosHistoricos.get(cuenta).clear();
         }
-        
+
         fechaUltimoCorte = fechaActual;
     }
     
     /**
-     * Genera el reporte mensual de una cuenta
+     * Genera el reporte mensual de una cuenta.
+     * @param cuenta La cuenta para la que se genera el reporte.
      */
     private void generarReporteMensual(Cuenta cuenta) {
         StringBuilder reporte = new StringBuilder();
@@ -134,7 +137,7 @@ public class ProcesoMensual {
         
         try {
             GeneradorTXT.exportarContenido(nombreArchivo, reporte.toString());
-            registroOperaciones.get(cuenta).clear(); // Limpiar registro después de generar reporte
+            registroOperaciones.get(cuenta).clear(); // Limpiar registro despues de generar reporte
         } catch (Exception e) {
             System.err.println("Error al generar reporte mensual: " + e.getMessage());
         }

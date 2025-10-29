@@ -1,5 +1,6 @@
 Portafolio de Cuentas
 
-Cuenta de LUIS ,  Saldo disponible: $-300.0 , Estado de la cuenta: cuentas.EstadoSobregirada@266474c2
+Cuenta de LUIS ,  Saldo disponible: $3000.0 , Estado de la cuenta: Activa , Antiguedad: 0 meses
+Cuenta de JULIO ,  Saldo disponible: $50000.0 , Estado de la cuenta: Cerrada , Antiguedad: 0 meses
 
-Saldo total del portafolio: $-300.0
+Saldo total del portafolio: $53000.0

@@ -1,4 +1,4 @@
-package test.observer;
+package observer;
 
 import observer.GestorAlertas;
 import observer.ClienteObservador;
@@ -27,7 +27,7 @@ public class GestorAlertasTest {
         // Generar una alerta
         gestor.generarAlerta("Saldo bajo");
         
-        // La verificación se hace a través de la salida del sistema
+        // La verificacion se hace a traves de la salida del sistema
         // Ya que los mensajes se imprimen directamente
         assertTrue(true); // La prueba pasa si no hay excepciones
     }
@@ -41,8 +41,8 @@ public class GestorAlertasTest {
         gestor.agregarObservador(observador);
         gestor.eliminarObservador(observador);
         
-        // Verificar que no haya excepciones al notificar después de eliminar
-        gestor.generarAlerta("Prueba después de eliminar");
+        // Verificar que no haya excepciones al notificar despues de eliminar
+        gestor.generarAlerta("Prueba despues de eliminar");
         assertTrue(true);
     }
     
@@ -57,8 +57,8 @@ public class GestorAlertasTest {
         gestor.agregarObservador(observador1);
         gestor.agregarObservador(observador2);
         
-        // Verificar que se pueden notificar múltiples observadores sin errores
-        gestor.generarAlerta("Notificación múltiple");
+        // Verificar que se pueden notificar multiples observadores sin errores
+        gestor.generarAlerta("Notificacion multiple");
         assertTrue(true);
     }
 }

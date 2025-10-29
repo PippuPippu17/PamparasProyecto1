@@ -1,4 +1,4 @@
-package test.serviciosextra;
+package serviciosextra;
 
 import cuentas.*;
 import observer.*;
@@ -25,6 +25,6 @@ public class GestorAlertasTest {
         gestor.agregarObservador(new ClienteObservador("Luis"));
         gestor.generarAlerta("Primera alerta");
         gestor.generarAlerta("Segunda alerta");
-        assertTrue(true, "No debe lanzar excepciones con múltiples alertas");
+        assertTrue(true, "No debe lanzar excepciones con multiples alertas");
     }
 }

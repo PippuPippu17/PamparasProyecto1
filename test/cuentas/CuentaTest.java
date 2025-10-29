@@ -1,6 +1,5 @@
-package test.cuentas;
+package cuentas;
 
-import cuentas.Cuenta;
 import cuentas.EstadoActiva;
 import excepciones.EntradaInvalida;
 import intereses.InteresMensual;

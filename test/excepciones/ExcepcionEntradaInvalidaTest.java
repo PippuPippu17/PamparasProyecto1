@@ -1,4 +1,4 @@
-package test.excepciones;
+package excepciones;
 
 import excepciones.EntradaInvalida;
 import org.junit.jupiter.api.Test;
@@ -8,8 +8,8 @@ public class ExcepcionEntradaInvalidaTest {
 
     @Test
     public void testMensajePersonalizado() {
-        EntradaInvalida e = new EntradaInvalida("Monto inválido");
-        assertEquals("Monto inválido", e.getMessage());
+        EntradaInvalida e = new EntradaInvalida("Monto invalido");
+        assertEquals("Monto invalido", e.getMessage());
     }
 
     @Test

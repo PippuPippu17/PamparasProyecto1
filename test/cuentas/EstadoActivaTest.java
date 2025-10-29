@@ -1,4 +1,4 @@
-package test.cuentas;
+package cuentas;
 
 import cuentas.EstadoActiva;
 import cuentas.Cuenta;
