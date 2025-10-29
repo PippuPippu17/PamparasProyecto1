@@ -1,0 +1,24 @@
+# Compiled class files
+*.class
+
+# Maven build directory
+target/
+
+# Log files
+*.log
+
+# IDE specific files
+.vscode/
+.idea/
+*.iml
+
+# OS specific files
+.DS_Store
+Thumbs.db
+NUL
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
